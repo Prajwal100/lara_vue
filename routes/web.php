@@ -17,3 +17,7 @@ Route::get('/', function () {
 Route::any('{slug}', function () {
     return view('welcome');
 });
+
+Route::post('app/create_tags','TagController@addTags');
+
+Route::get('app/get_tags','TagController@getTags');

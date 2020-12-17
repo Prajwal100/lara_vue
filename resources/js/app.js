@@ -8,6 +8,8 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 import router from './router'
+import common from "./common";
+Vue.mixin(common);
 Vue.component('mainapp',require('./components/mainapp').default);
 // Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
