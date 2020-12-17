@@ -21,3 +21,5 @@ Route::any('{slug}', function () {
 Route::post('app/create_tags','TagController@addTags');
 
 Route::get('app/get_tags','TagController@getTags');
+
+Route::post('app/delete_tags','TagController@deleteTags');
