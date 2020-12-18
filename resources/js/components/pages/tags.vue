@@ -24,7 +24,7 @@
                                 <td class="_table_name">{{tag.name}}</td>
                                 <td>{{tag.created_at}}</td>
                                 <td>
-                                    <Button type="primary" size="small" shape="circle" @click="showEditModal(tag)">Edit</Button>
+                                    <Button type="primary" size="small" shape="circle" @click="showEditModal(tag,i)">Edit</Button>
                                     <Button type="error" size="small"  shape="circle" @click="showDeletingModal(tag,i)" :loading="tag.isDeleting">Delete</Button>
                                 </td>
                             </tr>
@@ -38,7 +38,7 @@
                     title="Add Tags"
                     :mask-closable="false"
                     >
-                    <Input v-model="data.tagName" placeholder="Enter tag name..." />
+                    <Input v-model="data.name" placeholder="Enter tag name..." />
                     <div slot="footer">
                         <Button type="default" size="small" @click="addModel=false">Close</Button>
                         <Button type="success" size="small" @click="addTag" >{{isAdding ? 'Adding' : 'Add Tag'}}</Button>
@@ -50,7 +50,7 @@
                     title="Edit Tags"
                     :mask-closable="false"
                     >
-                    <Input v-model="editData.tagName" placeholder="Edit tag name..." />
+                    <Input v-model="editData.name" placeholder="Edit tag name..." />
                     <div slot="footer">
                         <Button type="default" size="small" @click="editModal=false">Close</Button>
                         <Button type="success" size="small" @click="editTag" >{{isAdding ? 'editing' : 'Edit Tag'}}</Button>
@@ -82,29 +82,30 @@
         data(){
             return{
                 data:{
-                    tagName:'',
+                    name:'',
                 },
                 addModel:false,
                 isAdding:false,
                 tags:[],
                 editModal:false,
                 editData:{
-                    tagName:'',
+                    name:'',
                 },
+                index:-1,
                 isDeleting:false,
                 showDeleteModal:false,
                 deleteItem:{},
-                deletingIndex:-1
+                deletingIndex:-1,
             }
         },
         methods:{
             async addTag(){
-                if(this.data.tagName.trim()=='') return this.e('Tag name is required');
+                if(this.data.name.trim()=='') return this.e('Tag name is required');
                 const res=await this.callApi('post','app/create_tags',this.data)
                 if(res.status===201){
                     this.s('Tags successfully added')
                     this.addModel=false
-                    this.data.tagName=''
+                    this.data.name=''
                 }
                 else{
                     if(res.status==422){
@@ -116,9 +117,10 @@
                 }
             },
             async editTag(){
-                if(this.editData.tagName.trim()=='') return this.e('Tag name is required');
-                const res=await this.callApi('post','app/edit_tags',this.data)
+                if(this.editData.name.trim()=='') return this.e('Tag name is required');
+                const res=await this.callApi('post','app/edit_tags',this.editData)
                 if(res.status===200){
+                    this.tags[this.index].name=this.editData.name
                     this.s('Tags successfully edited')
                     this.editModal=false
                 }
@@ -134,9 +136,14 @@
 
             },
 
-            showEditModal(tag){
-                this.editData=tag
+            showEditModal(tag,index){
+                let obj={
+                    id:tag.id,
+                    name:tag.name
+                }
+                this.editData=obj
                 this.editModal=true
+                this.index=index
             },
             async deleteTag(){
                 this.isDeleting=true

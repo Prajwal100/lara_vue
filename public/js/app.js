@@ -2010,15 +2010,16 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
   data: function data() {
     return {
       data: {
-        tagName: ''
+        name: ''
       },
       addModel: false,
       isAdding: false,
       tags: [],
       editModal: false,
       editData: {
-        tagName: ''
+        name: ''
       },
+      index: -1,
       isDeleting: false,
       showDeleteModal: false,
       deleteItem: {},
@@ -2035,7 +2036,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                if (!(_this.data.tagName.trim() == '')) {
+                if (!(_this.data.name.trim() == '')) {
                   _context.next = 2;
                   break;
                 }
@@ -2053,7 +2054,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
                   _this.s('Tags successfully added');
 
                   _this.addModel = false;
-                  _this.data.tagName = '';
+                  _this.data.name = '';
                 } else {
                   if (res.status == 422) {
                     _this.swr();
@@ -2079,7 +2080,7 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                if (!(_this2.editData.tagName.trim() == '')) {
+                if (!(_this2.editData.name.trim() == '')) {
                   _context2.next = 2;
                   break;
                 }
@@ -2088,12 +2089,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
 
               case 2:
                 _context2.next = 4;
-                return _this2.callApi('post', 'app/edit_tags', _this2.data);
+                return _this2.callApi('post', 'app/edit_tags', _this2.editData);
 
               case 4:
                 res = _context2.sent;
 
                 if (res.status === 200) {
+                  _this2.tags[_this2.index].name = _this2.editData.name;
+
                   _this2.s('Tags successfully edited');
 
                   _this2.editModal = false;
@@ -2113,9 +2116,14 @@ function _asyncToGenerator(fn) { return function () { var self = this, args = ar
         }, _callee2);
       }))();
     },
-    showEditModal: function showEditModal(tag) {
-      this.editData = tag;
+    showEditModal: function showEditModal(tag, index) {
+      var obj = {
+        id: tag.id,
+        name: tag.name
+      };
+      this.editData = obj;
       this.editModal = true;
+      this.index = index;
     },
     deleteTag: function deleteTag() {
       var _this3 = this;
@@ -85626,7 +85634,7 @@ var render = function() {
                                     },
                                     on: {
                                       click: function($event) {
-                                        return _vm.showEditModal(tag)
+                                        return _vm.showEditModal(tag, i)
                                       }
                                     }
                                   },
@@ -85679,11 +85687,11 @@ var render = function() {
               _c("Input", {
                 attrs: { placeholder: "Enter tag name..." },
                 model: {
-                  value: _vm.data.tagName,
+                  value: _vm.data.name,
                   callback: function($$v) {
-                    _vm.$set(_vm.data, "tagName", $$v)
+                    _vm.$set(_vm.data, "name", $$v)
                   },
-                  expression: "data.tagName"
+                  expression: "data.name"
                 }
               }),
               _vm._v(" "),
@@ -85735,11 +85743,11 @@ var render = function() {
               _c("Input", {
                 attrs: { placeholder: "Edit tag name..." },
                 model: {
-                  value: _vm.editData.tagName,
+                  value: _vm.editData.name,
                   callback: function($$v) {
-                    _vm.$set(_vm.editData, "tagName", $$v)
+                    _vm.$set(_vm.editData, "name", $$v)
                   },
-                  expression: "editData.tagName"
+                  expression: "editData.name"
                 }
               }),
               _vm._v(" "),
